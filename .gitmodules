@@ -1,0 +1,20 @@
+[submodule "rooutil"]
+	path = rooutil
+	url = git@github.com:sgnoohc/rooutil
+	ignore = untracked
+	branch = master
+[submodule "coreutil"]
+	path = coreutil
+	url = git@github.com:sgnoohc/coreutil
+	ignore = untracked
+	branch = master
+[submodule "ProjectMetis"]
+	path = ProjectMetis
+	url = git@github.com:aminnj/ProjectMetis
+	ignore = dirty
+	branch = master
+[submodule "CORE"]
+	path = CORE
+	url = git@github.com:cmstas/CORE
+	ignore = untracked
+	branch = master
