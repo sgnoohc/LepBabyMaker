@@ -139,41 +139,21 @@ public:
     void FillJets();
     void FillMET();
     void FillTracks();
-    void FillGenParticles();
-    void SortLeptonBranches();
     void SortJetBranches();
-    void FillTrigger();
     void FillVertexInfo();
     void FillMETFilter();
-    void FillSummaryVariables();
     void FillTTree();
 
     bool isLeptonOverlappingWithJet(int ijet);
-    bool isLeptonOverlappingWithJet_OldVersion(int ijet);
     bool isLeptonOverlappingWithTrack(int ijet);
     static bool isLooseMuon(int);
     static bool isLooseElectron(int);
-    static bool isVetoMuon(int);
-    static bool isVetoElectron(int);
-    static bool isVetoMuonNoIso_OldVersion(int);
-    static bool isVetoElectronNoIso_OldVersion(int);
+    static bool isPreselMuon(int);
+    static bool isPreselElectron(int);
+    static int checkMuonTag(unsigned int);
 
     // Calculator
     static int passCount(const vector<int>& vec);
-    int nSFOS();
-    void FillJetVariables(int variation);
-    void FillLeptonVariables();
-    void FillSSLeptonVariables(int, int);
-    void Fill3LLeptonVariables();
-
-    tuple<bool, int, int> isSSCR();
-    float get0SFOSMll();
-    float get0SFOSMee();
-    float get1SFOSMll();
-    float get2SFOSMll0();
-    float get2SFOSMll1();
-    float calcMTmax(LorentzVector MET, bool compareSSpairs);
-    float mT(LV p4, LV met);
 
 };
 
