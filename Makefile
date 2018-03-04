@@ -17,7 +17,8 @@ endif
 
 PACKAGES = rooutil coreutil
 
-LIBDIR = libs/
+LIBDIR = libs
+OBJDIR = objs
 
 CC = g++
 CMSROOT = ./
@@ -33,7 +34,7 @@ LINKERFLAGS = $(shell root-config --ldflags --libs) -lEG -lGenVector -lTMVA -O2
 DIR = ./
 
 SOURCES = $(wildcard *.cc)
-OBJECTS = $(SOURCES:.cc=.o)
+OBJECTS = $(SOURCES:%.cc=$(OBJDIR)/%.o)
 LIB = $(LIBDIR)/libScanChain.so
 
 CORESOURCES = $(wildcard CORE/*.cc)
@@ -42,7 +43,7 @@ CORELIB = $(LIBDIR)/libBabymakerCORE.so
 
 TOOLSSOURCES = $(wildcard CORE/Tools/*.cc) $(wildcard CORE/Tools/MT2/*.cc) $(wildcard CORE/Tools/btagsf/*.cc) $(wildcard CORE/Tools/datasetinfo/*.cc)
 TOOLSOBJECTS = $(TOOLSSOURCES:.cc=.o) 
-TOOLSLIB = $(LIBDIR)libBabymakerTools.so
+TOOLSLIB = $(LIBDIR)/libBabymakerTools.so
 
 #DICT = LinkDef_out.o
 DICT = 
@@ -79,7 +80,7 @@ $(PACKAGES):
 #	cp $@/lib$@.so $(LIBDIR)/
 
 # the option "-Wl,-rpath,./" adds ./ to the runtime search path for libraries
-$(EXE): $(PACKAGES) $(LIBS)
+$(EXE): $(PACKAGES) makedir $(LIBS)
 	$(QUIET) echo "Building $@"; \
 	echo "$(CC) -o $@ $(LIBS) $(ROOTLIBS) -Wl,-rpath,./ $(addprefix -L,$(PACKAGES)) $(addprefix -l,$(PACKAGES))"; \
 	$(CC) -o $@ $(LIBS) $(ROOTLIBS) -Wl,-rpath,./  $(addprefix -L,$(PACKAGES)) $(addprefix -l,$(PACKAGES))
@@ -88,19 +89,19 @@ $(EXE): $(PACKAGES) $(LIBS)
 	$(QUIET) echo "Compiling $<"; \
 	$(CC) $(CFLAGS) $< -c -o $@
 
-%.o: 	%.C %.h
+$(OBJDIR)/%.o: 	%.C %.h
 	$(QUIET) echo "Compiling $<"; \
 	$(CC) $(CFLAGS) $< -c -o $@
 
-%.o: 	%.cc
+$(OBJDIR)/%.o: 	%.cc
 	$(QUIET) echo "Compiling $<"; \
 	$(CC) $(CFLAGS) $< -c -o $@
 
-%.o: 	%.C
+$(OBJDIR)/%.o: 	%.C
 	$(QUIET) echo "Compiling $<"; \
 	$(CC) $(CFLAGS) $< -c -o $@
 
-%.o:    %.cxx 
+$(OBJDIR)/%.o:    %.cxx 
 	$(QUIET) echo "Compiling $<"; \
 	$(CC) $(CFLAGS) $< -c -o $@
 
@@ -108,12 +109,14 @@ libs:	$(LIBS)
 
 build:  $(EXE)
 
+makedir:
+	mkdir -p $(LIBDIR) $(OBJDIR)
+
 b: build
 
 clean:
 	rm -f \
-	LinkDef_out* \
-	*.o \
+	$(OBJECTS) \
 	$(LIBS) \
 	$(EXE) \
 	CORE/*.o \
