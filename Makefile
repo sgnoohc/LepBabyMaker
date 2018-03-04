@@ -17,6 +17,8 @@ endif
 
 PACKAGES = rooutil coreutil
 
+LIBDIR = libs/
+
 CC = g++
 CMSROOT = ./
 INCLUDE = $(shell root-config --cflags) -I$(CMSROOT) -I$(CMSROOT)/CORE
@@ -32,15 +34,15 @@ DIR = ./
 
 SOURCES = $(wildcard *.cc)
 OBJECTS = $(SOURCES:.cc=.o)
-LIB = libScanChain.so
+LIB = $(LIBDIR)/libScanChain.so
 
 CORESOURCES = $(wildcard CORE/*.cc)
 COREOBJECTS = $(CORESOURCES:.cc=.o) 
-CORELIB = libBabymakerCORE.so
+CORELIB = $(LIBDIR)/libBabymakerCORE.so
 
 TOOLSSOURCES = $(wildcard CORE/Tools/*.cc) $(wildcard CORE/Tools/MT2/*.cc) $(wildcard CORE/Tools/btagsf/*.cc) $(wildcard CORE/Tools/datasetinfo/*.cc)
 TOOLSOBJECTS = $(TOOLSSOURCES:.cc=.o) 
-TOOLSLIB = libBabymakerTools.so
+TOOLSLIB = $(LIBDIR)libBabymakerTools.so
 
 #DICT = LinkDef_out.o
 DICT = 
@@ -74,7 +76,7 @@ $(LIB):	$(DICT) $(OBJECTS)
 
 $(PACKAGES):
 	make -j 15 -C $@
-	cp $@/lib$@.so .
+#	cp $@/lib$@.so $(LIBDIR)/
 
 # the option "-Wl,-rpath,./" adds ./ to the runtime search path for libraries
 $(EXE): $(PACKAGES) $(LIBS)
