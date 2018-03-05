@@ -150,7 +150,8 @@ public:
     static bool isLooseElectron(int);
     static bool isPreselMuon(int);
     static bool isPreselElectron(int);
-    static int checkMuonTag(unsigned int);
+    static bool checkMuonTag(int, int);
+    static bool checkElectronTag(int, int);
 
     // Calculator
     static int passCount(const vector<int>& vec);

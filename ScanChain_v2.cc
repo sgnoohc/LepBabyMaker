@@ -78,9 +78,9 @@ void babyMaker_v2::CreateOutput(int index)
     tx->createBranch<float>("evt_corrMETPhi_dn"); 
     tx->createBranch<float>("evt_pfsumet"); 
     tx->createBranch<float>("evt_pfmetSig"); 
-    tx->createBranch<int>("evt_event"); 
-    tx->createBranch<int>("evt_lumiBlock"); 
-    tx->createBranch<int>("evt_run"); 
+    tx->createBranch<unsigned long long>("evt_event"); 
+    tx->createBranch<unsigned long long>("evt_lumiBlock"); 
+    tx->createBranch<unsigned long long>("evt_run"); 
     tx->createBranch<bool>("filt_csc"); 
     tx->createBranch<bool>("filt_hbhe"); 
     tx->createBranch<bool>("passes_met_filters"); 
@@ -368,10 +368,10 @@ void babyMaker_v2::ProcessTriggers() { coreTrigger.process(); }
 void babyMaker_v2::ProcessGenParticles() { coreGenPart.process(); }
 
 //##############################################################################################################
-void babyMaker_v2::ProcessElectrons() { coreElectron.process(isPreselElectron); }
+void babyMaker_v2::ProcessElectrons() { coreElectron.process(isPreselElectron, checkElectronTag); }
 
 //##############################################################################################################
-void babyMaker_v2::ProcessMuons() { coreMuon.process(isPreselMuon); }
+void babyMaker_v2::ProcessMuons() { coreMuon.process(isPreselMuon, checkMuonTag); }
 
 //##############################################################################################################
 void babyMaker_v2::ProcessJets() { coreJet.process(coreJec); }
@@ -385,6 +385,13 @@ void babyMaker_v2::ProcessTracks() { coreTrack.process(); }
 //##############################################################################################################
 bool babyMaker_v2::PassPresel()
 {
+    // Why? I don't know
+    if (cms3.evt_isRealData() && looper.getCurrentFileName().Contains("PromptReco") && cms3.evt_run() <= 251562)
+        return false;
+
+    if (cms3.evt_isRealData() && !goodrun(cms3.evt_run(), cms3.evt_lumiBlock()))
+        return false;
+
     // Place your preselection
     return true;
 }
@@ -392,6 +399,9 @@ bool babyMaker_v2::PassPresel()
 //##############################################################################################################
 void babyMaker_v2::FillOutput()
 {
+    // Fill Electrons
+    FillElectrons();
+
     // Fill Muons
     FillMuons();
 }
@@ -404,18 +414,167 @@ void babyMaker_v2::FillEventInfo()
 //##############################################################################################################
 void babyMaker_v2::FillElectrons()
 {
-    for (auto& idx : coreElectron.index)
+    for (unsigned int i = 0; i < coreElectron.index.size(); ++i)
     {
+        // Check whether I found a tag
+        int tag_idx = coreElectron.tagindex[i];
+
+        if (tag_idx < 0)
+            continue;
+
+        int idx = coreElectron.index[i];
+
+        // Get the tag p4
+        LV dilep_p4 = cms3.els_p4()[idx] + cms3.els_p4()[tag_idx];
+        float dilep_mass = dilep_p4.mass();
+
+        // Skip if off the Z peak
+        if (!( dilep_mass > 60 && dilep_mass < 120 ))
+            continue;
+
+        int HLT_Ele8_CaloIdM_TrackIdM_PFJet30;
+        int HLT_Ele12_CaloIdM_TrackIdM_PFJet30;
+        int HLT_Ele17_CaloIdM_TrackIdM_PFJet30;
+        int HLT_Ele23_CaloIdM_TrackIdM_PFJet30;
+        int HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30;
+        int HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30;
+        int HLT_Ele17_CaloIdL_TrackIdL_IsoVL_PFJet30;
+        int HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30;
+        int HLT_Ele27_eta2p1_WPTight_Gsf;
+        int HLT_Ele32_eta2p1_WPTight_Gsf;
+        int HLT_Ele105_CaloIdVT_GsfTrkIdT;
+        int HLT_Ele115_CaloIdVT_GsfTrkIdT;
+        int HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL;
+
+        //Single Electron Trigger with Jet
+        setHLTBranch("HLT_Ele8_CaloIdM_TrackIdM_PFJet30_v"        , cms3.els_HLT_Ele8_CaloIdM_TrackIdM_PFJet30_ElectronLeg()[idx]        , HLT_Ele8_CaloIdM_TrackIdM_PFJet30);
+        setHLTBranch("HLT_Ele12_CaloIdM_TrackIdM_PFJet30_v"       , cms3.els_HLT_Ele12_CaloIdM_TrackIdM_PFJet30_ElectronLeg()[idx]       , HLT_Ele12_CaloIdM_TrackIdM_PFJet30);
+        setHLTBranch("HLT_Ele17_CaloIdM_TrackIdM_PFJet30_v"       , cms3.els_HLT_Ele17_CaloIdM_TrackIdM_PFJet30_ElectronLeg()[idx]       , HLT_Ele17_CaloIdM_TrackIdM_PFJet30);
+        setHLTBranch("HLT_Ele23_CaloIdM_TrackIdM_PFJet30_v"       , cms3.els_HLT_Ele23_CaloIdM_TrackIdM_PFJet30_ElectronLeg()[idx]       , HLT_Ele23_CaloIdM_TrackIdM_PFJet30);
+        setHLTBranch("HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30_v"  , cms3.els_HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30_ElectronLeg()[idx]  , HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30);
+        setHLTBranch("HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30_v" , cms3.els_HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30_ElectronLeg()[idx] , HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30);
+        setHLTBranch("HLT_Ele17_CaloIdL_TrackIdL_IsoVL_PFJet30_v" , cms3.els_HLT_Ele17_CaloIdL_TrackIdL_IsoVL_PFJet30_ElectronLeg()[idx] , HLT_Ele17_CaloIdL_TrackIdL_IsoVL_PFJet30);
+        setHLTBranch("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_v" , cms3.els_HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30_ElectronLeg()[idx] , HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30);
+        //Single Electron Trigger
+        setHLTBranch("HLT_Ele27_eta2p1_WPTight_Gsf_v"             , cms3.els_HLT_Ele27_eta2p1_WPTight_Gsf()[idx]                         , HLT_Ele27_eta2p1_WPTight_Gsf);
+        setHLTBranch("HLT_Ele32_eta2p1_WPTight_Gsf_v"             , cms3.els_HLT_Ele32_eta2p1_WPTight_Gsf()[idx]                         , HLT_Ele32_eta2p1_WPTight_Gsf);
+        setHLTBranch("HLT_Ele105_CaloIdVT_GsfTrkIdT_v"            , cms3.els_HLT_Ele105_CaloIdVT_GsfTrkIdT()[idx]                        , HLT_Ele105_CaloIdVT_GsfTrkIdT);
+        setHLTBranch("HLT_Ele115_CaloIdVT_GsfTrkIdT_v"            , cms3.els_HLT_Ele115_CaloIdVT_GsfTrkIdT()[idx]                        , HLT_Ele115_CaloIdVT_GsfTrkIdT);
+        setHLTBranch("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_v"   , cms3.els_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL()[idx]               , HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL);
+
+//        int HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ;
+//        int HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ;
+//        setHLTBranch("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v", cms3.els_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ()[idx], HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ);
+//        setHLTBranch("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v", cms3.els_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ()[idx], HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ);
+
+        // Set the branch of the tag electrons single lepton trigger bit
+        int tag_HLT_Ele27_eta2p1_WPTight_Gsf;
+        int tag_HLT_Ele32_eta2p1_WPTight_Gsf;
+        setHLTBranch("HLT_Ele27_eta2p1_WPTight_Gsf_v", (tag_idx >= 0 ? cms3.els_HLT_Ele27_eta2p1_WPTight_Gsf().at(tag_idx) : 0), tag_HLT_Ele27_eta2p1_WPTight_Gsf);
+        setHLTBranch("HLT_Ele32_eta2p1_WPTight_Gsf_v", (tag_idx >= 0 ? cms3.els_HLT_Ele32_eta2p1_WPTight_Gsf().at(tag_idx) : 0), tag_HLT_Ele32_eta2p1_WPTight_Gsf);
+
+        // Set the TTree branches
+        tx->setBranch<bool>("evt_isRealData", cms3.evt_isRealData());
+        if (cms3.evt_isRealData())
+            tx->setBranch<float>("evt_scale1fb", 1);
+        else
+            tx->setBranch<float>("evt_scale1fb", coreDatasetInfo.getScale1fb());
+        tx->setBranch<unsigned long long>("evt_event", cms3.evt_event());
+        tx->setBranch<unsigned long long>("evt_lumiBlock", cms3.evt_lumiBlock());
+        tx->setBranch<unsigned long long>("evt_run", cms3.evt_run());
+        tx->setBranch<LV>("p4", cms3.els_p4()[idx]);
+        tx->setBranch<LV>("tag_p4", cms3.els_p4()[tag_idx]);
+        tx->setBranch<LV>("dilep_p4", dilep_p4);
+        tx->setBranch<float>("dilep_mass", dilep_mass);
+        tx->setBranch<int>("id", -11.0 * cms3.els_charge()[idx]);
+        tx->setBranch<float>("dxyPV", cms3.els_dxyPV()[idx]);
+        tx->setBranch<float>("dZ", cms3.els_dzPV()[idx]);
+        tx->setBranch<float>("ip3d", cms3.els_ip3d()[idx]);
+        tx->setBranch<float>("ip3derr", cms3.els_ip3derr()[idx]);
+        tx->setBranch<bool>("passes_VVV_cutbased_tight", electronID(idx, VVV_cutbased_tight));
+        tx->setBranch<int>("HLT_Ele8_CaloIdM_TrackIdM_PFJet30" , HLT_Ele8_CaloIdM_TrackIdM_PFJet30);
+        tx->setBranch<int>("HLT_Ele12_CaloIdM_TrackIdM_PFJet30" , HLT_Ele12_CaloIdM_TrackIdM_PFJet30);
+        tx->setBranch<int>("HLT_Ele17_CaloIdM_TrackIdM_PFJet30" , HLT_Ele17_CaloIdM_TrackIdM_PFJet30);
+        tx->setBranch<int>("HLT_Ele23_CaloIdM_TrackIdM_PFJet30" , HLT_Ele23_CaloIdM_TrackIdM_PFJet30);
+        tx->setBranch<int>("HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30" , HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30);
+        tx->setBranch<int>("HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30" , HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30);
+        tx->setBranch<int>("HLT_Ele17_CaloIdL_TrackIdL_IsoVL_PFJet30" , HLT_Ele17_CaloIdL_TrackIdL_IsoVL_PFJet30);
+        tx->setBranch<int>("HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30" , HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30);
+        tx->setBranch<int>("HLT_Ele27_eta2p1_WPTight_Gsf" , HLT_Ele27_eta2p1_WPTight_Gsf);
+        tx->setBranch<int>("HLT_Ele32_eta2p1_WPTight_Gsf" , HLT_Ele32_eta2p1_WPTight_Gsf);
+        tx->setBranch<int>("HLT_Ele105_CaloIdVT_GsfTrkIdT" , HLT_Ele105_CaloIdVT_GsfTrkIdT);
+        tx->setBranch<int>("HLT_Ele115_CaloIdVT_GsfTrkIdT" , HLT_Ele115_CaloIdVT_GsfTrkIdT);
+        tx->setBranch<int>("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL" , HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL);
+        tx->setBranch<int>("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_TrailingLeg" , cms3.els_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_TrailingLeg()[idx]);
+        tx->setBranch<int>("HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_LeadingLeg" , cms3.els_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_LeadingLeg()[idx]);
+        tx->setBranch<int>("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_TrailingLeg" , cms3.els_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_TrailingLeg()[idx]);
+        tx->setBranch<int>("HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_LeadingLeg" , cms3.els_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_LeadingLeg()[idx]);
+
+        tx->setBranch<float>("sigmaIEtaIEta_full5x5", cms3.els_sigmaIEtaIEta_full5x5()[idx]);
+        tx->setBranch<float>("etaSC", cms3.els_etaSC()[idx]);
+        tx->setBranch<float>("dEtaIn", cms3.els_dEtaIn()[idx]);
+        tx->setBranch<float>("dPhiIn", cms3.els_dPhiIn()[idx]);
+        tx->setBranch<float>("hOverE", cms3.els_hOverE()[idx]);
+        tx->setBranch<float>("ecalEnergy", cms3.els_ecalEnergy()[idx]);
+        tx->setBranch<float>("eOverPIn", cms3.els_eOverPIn()[idx]);
+        tx->setBranch<float>("ecalPFClusterIso", cms3.els_ecalPFClusterIso()[idx]);
+        tx->setBranch<float>("hcalPFClusterIso", cms3.els_hcalPFClusterIso()[idx]);
+        tx->setBranch<float>("tkIso", cms3.els_tkIso()[idx]);
+
+//        conv_vtx_flag = cms3.els_conv_vtx_flag()[idx];
+//        exp_innerlayers = cms3.els_exp_innerlayers()[idx];
+//        exp_outerlayers = cms3.els_exp_outerlayers()[idx];
+//        charge = cms3.els_charge()[idx];
+//        sccharge = cms3.els_sccharge()[idx];
+//        ckf_charge = cms3.els_ckf_charge()[idx];
+//        trk_charge = cms3.els_trk_charge()[idx];
+//        threeChargeAgree_branch = threeChargeAgree(i);
+//        mva = getMVAoutput(i);
+//        mva_25ns = v25nsMVAreader->MVA(i);
+//        type = cms3.els_type()[idx];
+//        ecalIso = cms3.els_ecalIso()[idx];
+//        hcalIso = cms3.els_hcalIso()[idx];
+//        sigmaIEtaIEta = cms3.els_sigmaIEtaIEta()[idx];
+//        ckf_laywithmeas = cms3.els_ckf_laywithmeas()[idx];
+//        sigmaIPhiIPhi_full5x5 = cms3.els_sigmaIPhiIPhi_full5x5()[idx];
+//        e1x5_full5x5 = cms3.els_e1x5_full5x5()[idx];
+//        e5x5_full5x5 = cms3.els_e5x5_full5x5()[idx];
+//        r9_full5x5 = cms3.els_r9_full5x5()[idx];
+//        etaSCwidth = cms3.els_etaSCwidth()[idx];
+//        phiSCwidth = cms3.els_phiSCwidth()[idx];
+//        eSeed = cms3.els_eSeed()[idx];
+//        scSeedEta = cms3.els_scSeedEta()[idx];
+//        eSCRaw = cms3.els_eSCRaw()[idx];
+//        eSC = cms3.els_eSC()[idx];
+//        eSCPresh = cms3.els_eSCPresh()[idx];
+//        ckf_chi2 = cms3.els_ckf_chi2()[idx];
+//        ckf_ndof = cms3.els_ckf_ndof()[idx];
+//        chi2 = cms3.els_chi2()[idx];
+//        ndof = cms3.els_ndof()[idx];
+//        fbrem = cms3.els_fbrem()[idx];
+//        eOverPOut = cms3.els_eOverPOut()[idx];
+//        dEtaOut = cms3.els_dEtaOut()[idx];
+//        dPhiOut = cms3.els_dPhiOut()[idx];
+//        gsf_validHits = cms3.els_validHits()[idx];
+//        conv_vtx_prob = cms3.els_conv_vtx_prob()[idx];
+
+        FillTTree();
+
     }
 }
 
 //##############################################################################################################
 void babyMaker_v2::FillMuons()
 {
-    for (auto& idx : coreMuon.index)
+    for (unsigned int i = 0; i < coreMuon.index.size(); ++i)
     {
-        // It is guaranteed to be found due to preselection
-        int tag_idx = checkMuonTag(idx);
+        // Check whether I found a tag
+        int tag_idx = coreMuon.tagindex[i];
+
+        if (tag_idx < 0)
+            continue;
+
+        int idx = coreMuon.index[i];
 
         // Get the tag p4
         LV dilep_p4 = cms3.mus_p4()[idx] + cms3.mus_p4()[tag_idx];
@@ -458,11 +617,18 @@ void babyMaker_v2::FillMuons()
         // Tag single muon trigger
         int tag_HLT_IsoMu24;
         int tag_HLT_IsoTkMu24;
-        setHLTBranch("HLT_IsoMu24_v", (j >= 0 ? tas::mus_HLT_IsoMu24().at(j) : 0), tag_HLT_IsoMu24);
-        setHLTBranch("HLT_IsoTkMu24_v", (j >= 0 ? tas::mus_HLT_IsoTkMu24().at(j) : 0), tag_HLT_IsoTkMu24);
+        setHLTBranch("HLT_IsoMu24_v", (tag_idx >= 0 ? cms3.mus_HLT_IsoMu24().at(tag_idx) : 0), tag_HLT_IsoMu24);
+        setHLTBranch("HLT_IsoTkMu24_v", (tag_idx >= 0 ? cms3.mus_HLT_IsoTkMu24().at(tag_idx) : 0), tag_HLT_IsoTkMu24);
 
         // Set the TTree branches
         tx->setBranch<bool>("evt_isRealData", cms3.evt_isRealData());
+        if (cms3.evt_isRealData())
+            tx->setBranch<float>("evt_scale1fb", 1);
+        else
+            tx->setBranch<float>("evt_scale1fb", coreDatasetInfo.getScale1fb());
+        tx->setBranch<unsigned long long>("evt_event", cms3.evt_event());
+        tx->setBranch<unsigned long long>("evt_lumiBlock", cms3.evt_lumiBlock());
+        tx->setBranch<unsigned long long>("evt_run", cms3.evt_run());
         tx->setBranch<LV>("p4", cms3.mus_p4()[idx]);
         tx->setBranch<LV>("tag_p4", cms3.mus_p4()[tag_idx]);
         tx->setBranch<LV>("dilep_p4", dilep_p4);
@@ -599,8 +765,7 @@ bool babyMaker_v2::isLooseElectron(int idx)
 // Used to overlap remova against tracks
 bool babyMaker_v2::isPreselMuon(int idx)
 {
-    if (!( passMuonSelection_VVV(idx, VVV_cutbased_veto_v2) )) return false;
-    if (!( checkMuonTag(idx) >= 0                           )) return false;
+    if (!( cms3.mus_p4()[idx].pt() >= 10. )) return false;
     return true;
 }
 
@@ -608,7 +773,7 @@ bool babyMaker_v2::isPreselMuon(int idx)
 // Used to overlap remova against tracks
 bool babyMaker_v2::isPreselElectron(int idx)
 {
-    if (!( passElectronSelection_VVV(idx, VVV_cutbased_veto_v2) )) return false;
+    if (!( cms3.els_p4()[idx].pt() >= 10.        )) return false;
     return true;
 }
 
@@ -619,57 +784,29 @@ int babyMaker_v2::passCount(const vector<int>& v)
 }
 
 //##############################################################################################################
-int babyMaker_v2::checkMuonTag(unsigned int i)
+bool babyMaker_v2::checkMuonTag(int i, int j)
 {
-    for (unsigned int j = 0; j < tas::mus_p4().size(); j++)
-    {
-        // Tag muon selection
-        if (!( i != j                                                         )) continue; // Tag can't be same as probe
-        if (!( cms3.mus_p4().at(j).pt()                               > 20.0  )) continue;
-        if (!( fabs(cms3.mus_p4().at(j).eta())                        <  2.4  )) continue;
-        if (!( fabs(cms3.mus_dxyPV().at(j))                           <  0.02 )) continue;
-        if (!( fabs(cms3.mus_dzPV().at(j))                            <  0.05 )) continue;
-        if (!( fabs(cms3.mus_ip3d().at(j) / cms3.mus_ip3derr().at(j)) <  4    )) continue;
-        if (!( !isTightMuonPOG(j)                                             )) continue;
-        if (!( muRelIso03EA(j)                                        <  0.2  )) continue;
+    // Tag muon selection
+    if (!( cms3.mus_p4()[j].pt()                                    >= 20.0  )) return false;
+    if (!( fabs(cms3.mus_p4()[j].eta())                             <=  2.4  )) return false;
+    if (!( fabs(cms3.mus_dxyPV()[j])                                <=  0.02 )) return false;
+    if (!( fabs(cms3.mus_dzPV()[j])                                 <=  0.05 )) return false;
+    if (!( fabs(cms3.mus_ip3d()[j] / cms3.mus_ip3derr()[j])         <=  4    )) return false;
+    if (!( isTightMuonPOG(j)                                                 )) return false;
+    if (!( muRelIso03EA(j)                                          <=  0.2  )) return false;
+    if (!( fabs((cms3.mus_p4()[i] + cms3.mus_p4()[j]).mass() - 90.) <  30.   )) return false;
+    return true;
+}
 
-        // Exit with true when tag muon found
-        return j;
-    }
-    return -1;
-
-        // dilep
-
-        // Retrieve tag muon information
-//        tag_p4         = cms3.mus_p4().at(j);
-//        tag_charge     = cms3.mus_charge().at(j);
-//        tag_RelIso03EA = muRelIso03EA(j);
-
-//        // If MC, get the motherID of the tag
-//        if (!evt_isRealData)
-//        {
-//            tag_mc_motherid = cms3.mus_mc_motherid().at(j);
-//        }
-
-        // Set the branch of the tag muons single lepton trigger bit
-//        setHLTBranch("HLT_IsoMu24_v"  , (j >= 0 ? cms3.mus_HLT_IsoMu24().at(j)   : 0), tag_HLT_IsoMu24  );
-//        setHLTBranch("HLT_IsoTkMu24_v", (j >= 0 ? cms3.mus_HLT_IsoTkMu24().at(j) : 0), tag_HLT_IsoTkMu24);
-
-//        // Randomize if needed
-//        if (usedMu == false && ((rndm < 0.5 && tag_charge < 0) || (rndm >= 0.5 && tag_charge > 0)))
-//        {
-//            isRandom = true;
-//            usedMu = true;
-//        }
-//        else
-//        {
-//            isRandom = false;
-//        }
-
-//        // Exit with true when tag muon found
-//        return true;
-//    }
-//    return false;
+//##############################################################################################################
+bool babyMaker_v2::checkElectronTag(int i, int j)
+{
+    if (!( cms3.els_p4()[j].pt()                                    >= 20.0  )) return false;
+    if (!( fabs(cms3.els_etaSC()[j])                                <=  2.5  )) return false;
+    if (!( cms3.els_passMediumId()[j]                                        )) return false;
+    if (!( fabs(cms3.els_ip3d()[j] / cms3.els_ip3derr()[j])         <=  4    )) return false;
+    if (!( fabs((cms3.els_p4()[i] + cms3.els_p4()[j]).mass() - 90.) <  30.   )) return false;
+    return true;
 }
 
 //eof
