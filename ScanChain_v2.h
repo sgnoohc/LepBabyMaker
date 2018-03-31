@@ -144,6 +144,14 @@ public:
     void FillMETFilter();
     void FillTTree();
 
+    void FillElectronTrigger(int, int);
+    void FillElectronIDVariables(int, int);
+
+    void FillMuonTrigger(int, int);
+    void FillMuonIDVariables(int, int);
+
+    void FillIsolationVariables(int, int);
+
     bool isLeptonOverlappingWithJet(int ijet);
     bool isLeptonOverlappingWithTrack(int ijet);
     static bool isLooseMuon(int);

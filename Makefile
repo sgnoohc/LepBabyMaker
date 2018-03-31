@@ -131,6 +131,9 @@ clean:
 
 localclean:
 	rm -f \
+	$(OBJECTS) \
+	$(LIBS) \
+	$(EXE) \
 	LinkDef_out* \
 	*.o \
 	*.so 
