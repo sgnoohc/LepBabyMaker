@@ -111,15 +111,21 @@ private:
 
     bool isData;
 
+    bool doTagAndProbe;
+    bool doFakeRate;
+
 public:
 
-    babyMaker_v2() {}
-    ~babyMaker_v2() {}
+    babyMaker_v2() { doFakeRate = false; }
+    ~babyMaker_v2() { doFakeRate = false; }
     void ScanChain_v2(TChain*, std::string = "testSample", int max_events = -1, int index = 1, bool verbose = false);
 
     void CreateOutput(int index=1);
 
     void ConfigureGoodRunsList();
+
+    void SetFakeRateMode(bool dofakerate=true) { doFakeRate = dofakerate; }
+    void SetProcessMode();
 
     void ProcessTriggers();
     void ProcessGenParticles();
@@ -138,6 +144,7 @@ public:
     void FillMuons();
     void FillJets();
     void FillMET();
+    void FillGenParticles();
     void FillTracks();
     void SortJetBranches();
     void FillVertexInfo();
@@ -154,15 +161,20 @@ public:
 
     bool isLeptonOverlappingWithJet(int ijet);
     bool isLeptonOverlappingWithTrack(int ijet);
+    static bool isVetoMuon(int);
+    static bool isVetoElectron(int);
     static bool isLooseMuon(int);
     static bool isLooseElectron(int);
     static bool isPreselMuon(int);
     static bool isPreselElectron(int);
+    static bool isTightNoIsoMuon(int);
+    static bool isTightNoIsoElectron(int);
     static bool checkMuonTag(int, int);
     static bool checkElectronTag(int, int);
 
     // Calculator
     static int passCount(const vector<int>& vec);
+    static int foundCount(const vector<int>& vec);
 
 };
 

@@ -13,16 +13,18 @@ int main(int argc, char **argv)
 {
     if (argc < 3)
     {
-        std::cout << "USAGE: processBaby <tag> <filename> [<max_num_events>] [index] [type anything to make it verbose]" << std::endl;
+        std::cout << "USAGE: processBaby <tag> <filename> [<max_num_events>] [index] [type anything to make it fake-rate mode] [type anything to make it verbose]" << std::endl;
         return 1;
     }
     TString infile(argv[1]);
     int max_events = -1;
     int index = 1;
+    bool dofakerate = false;
     bool verbose = false;
     if (argc >= 3) { max_events = atoi(argv[2]); }
     if (argc >= 4) { index = atoi(argv[3]); }
-    if (argc >= 5) { verbose = true; }
+    if (argc >= 5) { dofakerate = true; }
+    if (argc >= 6) { verbose = true; }
     std::cout << "set max number of events to: " << max_events << std::endl;
     std::cout << "running on files: " << infile.Data() << std::endl;
 
@@ -58,6 +60,8 @@ int main(int argc, char **argv)
     // run
     //--------------------------------
     babyMaker_v2 *looper = new babyMaker_v2();
+    cout << "Running on dofakerate mode ? " << dofakerate << endl;
+    looper->SetFakeRateMode(dofakerate);
     looper->ScanChain_v2(chain, "dummy", max_events, index, verbose);
     return 0;
 }

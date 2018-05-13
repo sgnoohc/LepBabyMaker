@@ -13,10 +13,12 @@ import metis
 import sys
 import os
 
+#job_tag = "2016_fakerate_v3.0"
+job_tag = "2016_tnp_sample_v2.0.0" # TTTT, TTbar, WWW for ROC curve study for May 15th SNT Fake Lepton forum.
+
 # Configurations
 main_dir = os.path.dirname(os.path.abspath(__file__))
 metis_path = os.path.dirname(os.path.dirname(metis.__file__))
-job_tag = "2016_tnp_sample_v1.18"
 exec_path = os.path.join(main_dir, "metis.sh")
 tar_path = os.path.join(main_dir, "package.tar.gz")
 hadoop_path = "metis/lepbaby/{}".format(job_tag)
@@ -26,29 +28,29 @@ args = ""
 os.system("tar -czf package.tar.gz setup.sh hadoopmap.txt coreutil/data rooutil/*.so coreutil/*.so libs/ processBaby CORE/Tools")
 
 dslocs = [
-    ["/DY"                                            , "/hadoop/cms/store/group/snt/run2_moriond17/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/V08-00-16/" ] ,
+#    ["/DY"                                            , "/hadoop/cms/store/group/snt/run2_moriond17/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/V08-00-16/" ] ,
     ["/TTbar"                                         , "/hadoop/cms/store/group/snt/run2_moriond17/TT_TuneCUETP8M2T4_13TeV-powheg-pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/V08-00-16/"                      ] ,
-    ["/WJets"                                         , "/hadoop/cms/store/group/snt/run2_moriond17/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/V08-00-16/"           ] ,
-    ["/QCD_Mu"                                        , "/hadoop/cms/store/group/snt/run2_moriond17/QCD_Pt-20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/V08-00-16/"    ] ,
+#    ["/WJets"                                         , "/hadoop/cms/store/group/snt/run2_moriond17/WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/V08-00-16/"           ] ,
+#    ["/QCD_Mu"                                        , "/hadoop/cms/store/group/snt/run2_moriond17/QCD_Pt-20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/V08-00-16/"    ] ,
 #    ["/WW"                                            , "/hadoop/cms/store/group/snt/run2_moriond17/WW_TuneCUETP8M1_13TeV-pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/V08-00-16/"                               ] ,
 #    ["/WZ"                                            , "/hadoop/cms/store/group/snt/run2_moriond17/WZ_TuneCUETP8M1_13TeV-pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/V08-00-16/"                               ] ,
 #    ["/ZZ"                                            , "/hadoop/cms/store/group/snt/run2_moriond17/EWK_LNuJJ_MJJ-120_13TeV-madgraph-pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/V08-00-16/"                    ] ,
-    ["/Run2016B_SingleElectron_MINIAOD_03Feb2017_ver2-v2" , "/nfs-7/userdata/dataTuple/kludge/Run2016B_SingleElectron_MINIAOD_03Feb2017_ver2-v2/merged/V08-00-18/"                                                                         ] ,
-    ["/Run2016C_SingleElectron_MINIAOD_03Feb2017-v1"      , "/nfs-7/userdata/dataTuple/kludge/Run2016C_SingleElectron_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                              ] ,
-    ["/Run2016D_SingleElectron_MINIAOD_03Feb2017-v1"      , "/nfs-7/userdata/dataTuple/kludge/Run2016D_SingleElectron_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                              ] ,
-    ["/Run2016E_SingleElectron_MINIAOD_03Feb2017-v1"      , "/nfs-7/userdata/dataTuple/kludge/Run2016E_SingleElectron_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                              ] ,
-    ["/Run2016F_SingleElectron_MINIAOD_03Feb2017-v1"      , "/nfs-7/userdata/dataTuple/kludge/Run2016F_SingleElectron_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                              ] ,
-    ["/Run2016G_SingleElectron_MINIAOD_03Feb2017-v1"      , "/nfs-7/userdata/dataTuple/kludge/Run2016G_SingleElectron_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                              ] ,
-    ["/Run2016H_SingleElectron_MINIAOD_03Feb2017_ver2-v1" , "/nfs-7/userdata/dataTuple/kludge/Run2016H_SingleElectron_MINIAOD_03Feb2017_ver2-v1/merged/V08-00-18/"                                                                         ] ,
-    ["/Run2016H_SingleElectron_MINIAOD_03Feb2017_ver3-v1" , "/nfs-7/userdata/dataTuple/kludge/Run2016H_SingleElectron_MINIAOD_03Feb2017_ver3-v1/merged/V08-00-18/"                                                                         ] ,
-    ["/Run2016B_SingleMuon_MINIAOD_03Feb2017_ver2-v2"     , "/nfs-7/userdata/dataTuple/kludge/Run2016B_SingleMuon_MINIAOD_03Feb2017_ver2-v2/merged/V08-00-18/"                                                                             ] ,
-    ["/Run2016C_SingleMuon_MINIAOD_03Feb2017-v1"          , "/nfs-7/userdata/dataTuple/kludge/Run2016C_SingleMuon_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                                  ] ,
-    ["/Run2016D_SingleMuon_MINIAOD_03Feb2017-v1"          , "/nfs-7/userdata/dataTuple/kludge/Run2016D_SingleMuon_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                                  ] ,
-    ["/Run2016E_SingleMuon_MINIAOD_03Feb2017-v1"          , "/nfs-7/userdata/dataTuple/kludge/Run2016E_SingleMuon_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                                  ] ,
-    ["/Run2016F_SingleMuon_MINIAOD_03Feb2017-v1"          , "/nfs-7/userdata/dataTuple/kludge/Run2016F_SingleMuon_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                                  ] ,
-    ["/Run2016G_SingleMuon_MINIAOD_03Feb2017-v1"          , "/nfs-7/userdata/dataTuple/kludge/Run2016G_SingleMuon_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                                  ] ,
-    ["/Run2016H_SingleMuon_MINIAOD_03Feb2017_ver2-v1"     , "/nfs-7/userdata/dataTuple/kludge/Run2016H_SingleMuon_MINIAOD_03Feb2017_ver2-v1/merged/V08-00-18/"                                                                             ] ,
-    ["/Run2016H_SingleMuon_MINIAOD_03Feb2017_ver3-v1"     , "/nfs-7/userdata/dataTuple/kludge/Run2016H_SingleMuon_MINIAOD_03Feb2017_ver3-v1/merged/V08-00-18/"                                                                             ] ,
+#    ["/Run2016B_SingleElectron_MINIAOD_03Feb2017_ver2-v2" , "/nfs-7/userdata/dataTuple/kludge/Run2016B_SingleElectron_MINIAOD_03Feb2017_ver2-v2/merged/V08-00-18/"                                                                         ] ,
+#    ["/Run2016C_SingleElectron_MINIAOD_03Feb2017-v1"      , "/nfs-7/userdata/dataTuple/kludge/Run2016C_SingleElectron_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                              ] ,
+#    ["/Run2016D_SingleElectron_MINIAOD_03Feb2017-v1"      , "/nfs-7/userdata/dataTuple/kludge/Run2016D_SingleElectron_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                              ] ,
+#    ["/Run2016E_SingleElectron_MINIAOD_03Feb2017-v1"      , "/nfs-7/userdata/dataTuple/kludge/Run2016E_SingleElectron_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                              ] ,
+#    ["/Run2016F_SingleElectron_MINIAOD_03Feb2017-v1"      , "/nfs-7/userdata/dataTuple/kludge/Run2016F_SingleElectron_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                              ] ,
+#    ["/Run2016G_SingleElectron_MINIAOD_03Feb2017-v1"      , "/nfs-7/userdata/dataTuple/kludge/Run2016G_SingleElectron_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                              ] ,
+#    ["/Run2016H_SingleElectron_MINIAOD_03Feb2017_ver2-v1" , "/nfs-7/userdata/dataTuple/kludge/Run2016H_SingleElectron_MINIAOD_03Feb2017_ver2-v1/merged/V08-00-18/"                                                                         ] ,
+#    ["/Run2016H_SingleElectron_MINIAOD_03Feb2017_ver3-v1" , "/nfs-7/userdata/dataTuple/kludge/Run2016H_SingleElectron_MINIAOD_03Feb2017_ver3-v1/merged/V08-00-18/"                                                                         ] ,
+#    ["/Run2016B_SingleMuon_MINIAOD_03Feb2017_ver2-v2"     , "/nfs-7/userdata/dataTuple/kludge/Run2016B_SingleMuon_MINIAOD_03Feb2017_ver2-v2/merged/V08-00-18/"                                                                             ] ,
+#    ["/Run2016C_SingleMuon_MINIAOD_03Feb2017-v1"          , "/nfs-7/userdata/dataTuple/kludge/Run2016C_SingleMuon_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                                  ] ,
+#    ["/Run2016D_SingleMuon_MINIAOD_03Feb2017-v1"          , "/nfs-7/userdata/dataTuple/kludge/Run2016D_SingleMuon_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                                  ] ,
+#    ["/Run2016E_SingleMuon_MINIAOD_03Feb2017-v1"          , "/nfs-7/userdata/dataTuple/kludge/Run2016E_SingleMuon_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                                  ] ,
+#    ["/Run2016F_SingleMuon_MINIAOD_03Feb2017-v1"          , "/nfs-7/userdata/dataTuple/kludge/Run2016F_SingleMuon_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                                  ] ,
+#    ["/Run2016G_SingleMuon_MINIAOD_03Feb2017-v1"          , "/nfs-7/userdata/dataTuple/kludge/Run2016G_SingleMuon_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                                  ] ,
+#    ["/Run2016H_SingleMuon_MINIAOD_03Feb2017_ver2-v1"     , "/nfs-7/userdata/dataTuple/kludge/Run2016H_SingleMuon_MINIAOD_03Feb2017_ver2-v1/merged/V08-00-18/"                                                                             ] ,
+#    ["/Run2016H_SingleMuon_MINIAOD_03Feb2017_ver3-v1"     , "/nfs-7/userdata/dataTuple/kludge/Run2016H_SingleMuon_MINIAOD_03Feb2017_ver3-v1/merged/V08-00-18/"                                                                             ] ,
 #    ["/QCD_Pt_15to20_MuEnrichedPt5_TuneCUETP8M1_13TeV_pythia8_RunIISummer16MiniAODv2_PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_v1"         , "/hadoop/cms/store/group/snt/run2_moriond17/QCD_Pt-15to20_MuEnrichedPt5_TuneCUETP8M1_13TeV_pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/V08-00-16/" ]         , 
 #    ["/QCD_Pt_20to30_MuEnrichedPt5_TuneCUETP8M1_13TeV_pythia8_RunIISummer16MiniAODv2_PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_v1"         , "/hadoop/cms/store/group/snt/run2_moriond17/QCD_Pt-20to30_MuEnrichedPt5_TuneCUETP8M1_13TeV_pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/V08-00-16/" ]         , 
 #    ["/QCD_Pt_30to50_MuEnrichedPt5_TuneCUETP8M1_13TeV_pythia8_RunIISummer16MiniAODv2_PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_v1"         , "/hadoop/cms/store/group/snt/run2_moriond17/QCD_Pt-30to50_MuEnrichedPt5_TuneCUETP8M1_13TeV_pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/V08-00-16/" ]         , 
@@ -90,6 +92,10 @@ dslocs = [
 #    ["/Run2016G_DoubleMuon_MINIAOD_03Feb2017-v1"      , "/nfs-7/userdata/dataTuple/kludge/Run2016G_DoubleMuon_MINIAOD_03Feb2017-v1/merged/V08-00-18/"                                                                                                     ] ,
 #    ["/Run2016H_DoubleMuon_MINIAOD_03Feb2017_ver2-v1" , "/nfs-7/userdata/dataTuple/kludge/Run2016H_DoubleMuon_MINIAOD_03Feb2017_ver2-v1/merged/V08-00-18/"                                                                                                ] ,
 #    ["/Run2016H_DoubleMuon_MINIAOD_03Feb2017_ver3-v1" , "/nfs-7/userdata/dataTuple/kludge/Run2016H_DoubleMuon_MINIAOD_03Feb2017_ver3-v1/merged/V08-00-18/"                                                                                                ] ,
+
+    ["/TTTT", "/hadoop/cms/store/group/snt/run2_moriond17/TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/V08-00-16/" ] ,
+    ["/WWW", "/hadoop/cms/store/group/snt/run2_moriond17/TEST-www_wwwext-Private80X-v1/V08-00-16/" ],
+
 ]
 
 os.chdir(metis_path)
@@ -102,16 +108,16 @@ while True:
                 sample = DirectorySample( dataset=ds, location=loc ),
                 open_dataset = False,
                 flush = True,
-                files_per_output = 2,
+                files_per_output = 4,
                 output_name = "merged.root",
                 tag = job_tag,
                 cmssw_version = "CMSSW_9_2_1", # doesn't do anything
                 arguments = args,
                 executable = exec_path,
                 tarfile = tar_path,
-                condor_submit_params = {"sites" : "T2_US_UCSD,UAF"},
+                condor_submit_params = {"sites" : "T2_US_UCSD"},
                 special_dir = hadoop_path,
-                max_jobs = 10
+                #max_jobs = 30,
                 )
         task.process()
         allcomplete = allcomplete and task.complete()
