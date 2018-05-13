@@ -80,8 +80,8 @@ echo ">>> ./processBaby ${INPUTFILENAMES} -1"
 INPUTFILES=$(echo ${INPUTFILENAMES} | tr ',' ' ')
 INDEX=1
 for file in $INPUTFILES; do
-    ./processBaby "$file" -1 ${INDEX} dofake &
-    #./processBaby "$file" -1 ${INDEX} &
+    #./processBaby "$file" -1 ${INDEX} dofake &
+    ./processBaby "$file" -1 ${INDEX} &
     JOBS[${INDEX}]=$!
     INDEX=$((INDEX + 1))
 done
