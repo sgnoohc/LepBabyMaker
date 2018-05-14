@@ -131,6 +131,15 @@ void babyMaker_v2::CreateOutput(int index)
     tx->createBranch<int>("motherID"); 
     tx->createBranch<int>("mc_id"); 
     tx->createBranch<float>("RelIso03"); 
+    tx->createBranch<float>("RelIso02EAv2LepCORECustom"); 
+    tx->createBranch<float>("RelIso025EAv2LepCORECustom"); 
+    tx->createBranch<float>("RelIso03EAv2LepCORECustom"); 
+    tx->createBranch<float>("RelIso035EAv2LepCORECustom"); 
+    tx->createBranch<float>("RelIso04EAv2LepCORECustom"); 
+    tx->createBranch<float>("RelIso045EAv2LepCORECustom"); 
+    tx->createBranch<float>("RelIso05EAv2LepCORECustom"); 
+    tx->createBranch<float>("RelIso055EAv2LepCORECustom"); 
+    tx->createBranch<float>("RelIso06EAv2LepCORECustom"); 
     tx->createBranch<float>("RelIso02EAv2"); 
     tx->createBranch<float>("RelIso03EA"); 
     tx->createBranch<float>("RelIso03EAv2LepCORE"); 
@@ -831,6 +840,15 @@ void babyMaker_v2::FillElectronIDVariables(int idx, int tag_idx)
     tx->setBranch<float>("RelIso055EAv2", elRelIsoCustomCone(idx, 0.55, false, 0.0, /*useDBCorr=*/false, /*useEACorr=*/true, /*mindr=*/ -1, /*eaversion=*/2)); 
     tx->setBranch<float>("RelIso06EAv2", elRelIsoCustomCone(idx, 0.6, false, 0.0, /*useDBCorr=*/false, /*useEACorr=*/true, /*mindr=*/ -1, /*eaversion=*/2)); 
     tx->setBranch<float>("RelIso065EAv2", elRelIsoCustomCone(idx, 0.65, false, 0.0, /*useDBCorr=*/false, /*useEACorr=*/true, /*mindr=*/ -1, /*eaversion=*/2)); 
+    tx->setBranch<float>("RelIso02EAv2LepCORECustom"  , elRelIsoCustomCone(idx , 0.2  , false , 0.0 , /*useDBCorr=*/false , /*useEACorr=*/true , /*mindr=*/ -1 , /*eaversion=*/2 , /*include_leptons*/true));
+    tx->setBranch<float>("RelIso025EAv2LepCORECustom" , elRelIsoCustomCone(idx , 0.25 , false , 0.0 , /*useDBCorr=*/false , /*useEACorr=*/true , /*mindr=*/ -1 , /*eaversion=*/2 , /*include_leptons*/true));
+    tx->setBranch<float>("RelIso03EAv2LepCORECustom"  , elRelIsoCustomCone(idx , 0.3  , false , 0.0 , /*useDBCorr=*/false , /*useEACorr=*/true , /*mindr=*/ -1 , /*eaversion=*/2 , /*include_leptons*/true));
+    tx->setBranch<float>("RelIso035EAv2LepCORECustom" , elRelIsoCustomCone(idx , 0.35 , false , 0.0 , /*useDBCorr=*/false , /*useEACorr=*/true , /*mindr=*/ -1 , /*eaversion=*/2 , /*include_leptons*/true));
+    tx->setBranch<float>("RelIso04EAv2LepCORECustom"  , elRelIsoCustomCone(idx , 0.4  , false , 0.0 , /*useDBCorr=*/false , /*useEACorr=*/true , /*mindr=*/ -1 , /*eaversion=*/2 , /*include_leptons*/true));
+    tx->setBranch<float>("RelIso045EAv2LepCORECustom" , elRelIsoCustomCone(idx , 0.45 , false , 0.0 , /*useDBCorr=*/false , /*useEACorr=*/true , /*mindr=*/ -1 , /*eaversion=*/2 , /*include_leptons*/true));
+    tx->setBranch<float>("RelIso05EAv2LepCORECustom"  , elRelIsoCustomCone(idx , 0.5  , false , 0.0 , /*useDBCorr=*/false , /*useEACorr=*/true , /*mindr=*/ -1 , /*eaversion=*/2 , /*include_leptons*/true));
+    tx->setBranch<float>("RelIso055EAv2LepCORECustom" , elRelIsoCustomCone(idx , 0.55 , false , 0.0 , /*useDBCorr=*/false , /*useEACorr=*/true , /*mindr=*/ -1 , /*eaversion=*/2 , /*include_leptons*/true));
+    tx->setBranch<float>("RelIso06EAv2LepCORECustom"  , elRelIsoCustomCone(idx , 0.6  , false , 0.0 , /*useDBCorr=*/false , /*useEACorr=*/true , /*mindr=*/ -1 , /*eaversion=*/2 , /*include_leptons*/true));
     std::cout.clear();
     tx->setBranch<float>("mva", getMVAoutput(idx));
     tx->setBranch<float>("mva_25ns", getMVAoutput(idx));
@@ -1607,6 +1625,15 @@ void babyMaker_v2::FillMuonIDVariables(int idx, int tag_idx)
     tx->setBranch<float>("RelIso055EAv2", muRelIsoCustomCone(idx, 0.55, /*useVetoCones=*/false, 0.5, false, true, -1, 2));
     tx->setBranch<float>("RelIso06EAv2", muRelIsoCustomCone(idx, 0.6, /*useVetoCones=*/false, 0.5, false, true, -1, 2));
     tx->setBranch<float>("RelIso065EAv2", muRelIsoCustomCone(idx, 0.65, /*useVetoCones=*/false, 0.5, false, true, -1, 2));
+    tx->setBranch<float>("RelIso02EAv2LepCORECustom", muRelIsoCustomCone(idx, 0.2, /*useVetoCones=*/false, 0.5, false, true, -1, 2, true));
+    tx->setBranch<float>("RelIso025EAv2LepCORECustom", muRelIsoCustomCone(idx, 0.25, /*useVetoCones=*/false, 0.5, false, true, -1, 2, true));
+    tx->setBranch<float>("RelIso03EAv2LepCORECustom", muRelIsoCustomCone(idx, 0.3, /*useVetoCones=*/false, 0.5, false, true, -1, 2, true));
+    tx->setBranch<float>("RelIso035EAv2LepCORECustom", muRelIsoCustomCone(idx, 0.35, /*useVetoCones=*/false, 0.5, false, true, -1, 2, true));
+    tx->setBranch<float>("RelIso04EAv2LepCORECustom", muRelIsoCustomCone(idx, 0.4, /*useVetoCones=*/false, 0.5, false, true, -1, 2, true));
+    tx->setBranch<float>("RelIso045EAv2LepCORECustom", muRelIsoCustomCone(idx, 0.45, /*useVetoCones=*/false, 0.5, false, true, -1, 2, true));
+    tx->setBranch<float>("RelIso05EAv2LepCORECustom", muRelIsoCustomCone(idx, 0.5, /*useVetoCones=*/false, 0.5, false, true, -1, 2, true));
+    tx->setBranch<float>("RelIso055EAv2LepCORECustom", muRelIsoCustomCone(idx, 0.55, /*useVetoCones=*/false, 0.5, false, true, -1, 2, true));
+    tx->setBranch<float>("RelIso06EAv2LepCORECustom", muRelIsoCustomCone(idx, 0.6, /*useVetoCones=*/false, 0.5, false, true, -1, 2, true));
     tx->setBranch<float>("RelIso04DB", muRelIso04DB(idx));
     std::cout.clear();
 }
