@@ -15,7 +15,8 @@ import os
 
 #job_tag = "2016_fakerate_v3.0"
 #job_tag = "2016_tnp_sample_v2.0.0" # TTTT, TTbar, WWW for ROC curve study for May 15th SNT Fake Lepton forum.
-job_tag = "2016_tnp_sample_v2.0.1" # TTTT, TTbar, WWW for ROC curve study for May 15th SNT Fake Lepton forum. Added custom iso with leptons included from 0.2 to 0.6 cone size in steps of 0.05
+#job_tag = "2016_tnp_sample_v2.0.1" # TTTT, TTbar, WWW for ROC curve study for May 15th SNT Fake Lepton forum. Added custom iso with leptons included from 0.2 to 0.6 cone size in steps of 0.05
+job_tag = "2016_tnp_sample_v2.0.2" # TTTT, TTbar, WWW for ROC curve study for May 15th SNT Fake Lepton forum. Further added miniiso with leptons included and fixed the bug where the central core was added.
 
 # Configurations
 main_dir = os.path.dirname(os.path.abspath(__file__))

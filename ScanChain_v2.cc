@@ -230,6 +230,7 @@ void babyMaker_v2::CreateOutput(int index)
     tx->createBranch<float>("mt"); 
     tx->createBranch<float>("ptrelv0"); 
     tx->createBranch<float>("ptrelv1"); 
+    tx->createBranch<float>("miniisoEAv2Lep"); 
     tx->createBranch<float>("miniiso"); 
     tx->createBranch<float>("miniisoEAv2"); 
     tx->createBranch<float>("miniisoDB"); 
@@ -832,6 +833,7 @@ void babyMaker_v2::FillElectronIDVariables(int idx, int tag_idx)
     }
     tx->setBranch<float>("RelIso03EAv2LepPOGCustom", (eleRelIso03EA(idx, 2) * cms3.els_p4()[idx].pt() + reliso_eliso + reliso_muiso) / cms3.els_p4()[idx].pt()); 
     std::cout.setstate(std::ios_base::failbit); // To suppress warning about CMS4 not having PF candidates
+    tx->setBranch<float>("miniisoEAv2Lep", elMiniRelIso(idx, false, 0.0, false, true, -1, 2, true));
     tx->setBranch<float>("RelIso02EAv2", elRelIsoCustomCone(idx, 0.2, false, 0.0, /*useDBCorr=*/false, /*useEACorr=*/true, /*mindr=*/ -1, /*eaversion=*/2)); 
     tx->setBranch<float>("RelIso035EAv2", elRelIsoCustomCone(idx, 0.35, false, 0.0, /*useDBCorr=*/false, /*useEACorr=*/true, /*mindr=*/ -1, /*eaversion=*/2)); 
     tx->setBranch<float>("RelIso04EAv2", elRelIsoCustomCone(idx, 0.4, false, 0.0, /*useDBCorr=*/false, /*useEACorr=*/true, /*mindr=*/ -1, /*eaversion=*/2)); 
@@ -1591,8 +1593,8 @@ void babyMaker_v2::FillMuonIDVariables(int idx, int tag_idx)
     tx->setBranch<bool>("passes_SS_tight_noiso_v5", muonID(idx, SS_tight_noiso_v5));
     tx->setBranch<bool>("passes_SS_tight_v5", muonID(idx, SS_tight_v5));
     tx->setBranch<float>("ptrelv1", getPtRel(13, idx, true, 2));
-    tx->setBranch<float>("miniiso", muMiniRelIsoCMS3_EA(idx, /*ssEAversion=*/1)); // why?
-    tx->setBranch<float>("miniisoEAv2", muMiniRelIsoCMS3_EA(idx, /*ssEAversion=*/2)); // why?
+    tx->setBranch<float>("miniiso", muMiniRelIsoCMS3_EA(idx, /*ssEAversion=*/1));
+    tx->setBranch<float>("miniisoEAv2", muMiniRelIsoCMS3_EA(idx, /*ssEAversion=*/2));
     float reliso_eliso = 0;
     float reliso_muiso = 0;
     LV lep_p4 = cms3.mus_p4()[idx];
@@ -1617,6 +1619,7 @@ void babyMaker_v2::FillMuonIDVariables(int idx, int tag_idx)
     tx->setBranch<float>("RelIso03EAv2LepPOG", absiso/(cms3.mus_p4().at(idx).pt()));
 
     std::cout.setstate(std::ios_base::failbit); // To suppress warning about CMS4 not having PF candidates
+    tx->setBranch<float>("miniisoEAv2Lep", muMiniRelIso(idx, false, 0.5, false, true, -1, 2, true));
     tx->setBranch<float>("RelIso02EAv2", muRelIsoCustomCone(idx, 0.2, /*useVetoCones=*/false, 0.5, false, true, -1, 2));
     tx->setBranch<float>("RelIso035EAv2", muRelIsoCustomCone(idx, 0.35, /*useVetoCones=*/false, 0.5, false, true, -1, 2));
     tx->setBranch<float>("RelIso04EAv2", muRelIsoCustomCone(idx, 0.4, /*useVetoCones=*/false, 0.5, false, true, -1, 2));
